@@ -7,7 +7,7 @@ function UploadPage() {
 
   return (
     <div>
-      <h1>AI Notes & Quiz Generator</h1>
+      <h1>pdf-prep : for quick revisions and quizzes </h1>
 
       {!ready && <UploadPDF onUploaded={() => setReady(true)} />}
 

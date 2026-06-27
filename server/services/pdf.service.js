@@ -3,9 +3,25 @@ import { splitText } from "./chunk.service.js";
 import { storeEmbeddings } from "./embedding.service.js";
 
 export async function processPDF(filePath) {
-  const loader = new PDFLoader(filePath);
-  const docs = await loader.load();
+  try {
+    console.log(`Processing PDF: ${filePath}`);
+    
+    // 1. Load PDF
+    const loader = new PDFLoader(filePath);
+    const docs = await loader.load();
+    console.log(`Loaded ${docs.length} documents from PDF`);
 
-  const chunks = await splitText(docs);
-  await storeEmbeddings(chunks);
+    // 2. Split into chunks
+    const chunks = await splitText(docs);
+    console.log(`Split into ${chunks.length} chunks`);
+
+    // 3. Store embeddings in vector database
+    await storeEmbeddings(chunks);
+    
+    console.log("PDF processing completed successfully");
+    return { success: true, chunksProcessed: chunks.length };
+  } catch (error) {
+    console.error("Error processing PDF:", error);
+    throw error;
+  }
 }

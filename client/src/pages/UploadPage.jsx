@@ -7,7 +7,6 @@ function UploadPage() {
 
   return (
     <div>
-      <h1>pdf-prep : for quick revisions and quizzes </h1>
 
       {!ready && <UploadPDF onUploaded={() => setReady(true)} />}
 

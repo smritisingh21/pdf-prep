@@ -4,19 +4,17 @@ import Quiz from "../components/Quiz";
 
 function QuizPage() {
   const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [score, setScore] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadQuiz() {
       try {
         const data = await getQuiz();
-
-        console.log("Quiz API Response:", data);
-
-        // Store only the questions array
         setQuestions(data.questions || []);
-      } catch (error) {
-        console.error("Failed to load quiz:", error);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -25,15 +23,46 @@ function QuizPage() {
     loadQuiz();
   }, []);
 
-  if (loading) {
-    return <p>Generating quiz...</p>;
+  function handleAnswerChange(index, option) {
+    setAnswers((prev) => ({
+      ...prev,
+      [index]: option,
+    }));
   }
 
-  if (questions.length === 0) {
-    return <p>No questions found.</p>;
+  function handleSubmit() {
+    let correct = 0;
+
+    questions.forEach((q, index) => {
+      if (answers[index] === q.correctAnswer) {
+        correct++;
+      }
+    });
+
+    setScore(correct);
   }
 
-  return <Quiz questions={questions} />;
+  if (loading) return <p>Generating quiz...</p>;
+
+  return (
+    <div>
+      <Quiz
+        questions={questions}
+        answers={answers}
+        onAnswerChange={handleAnswerChange}
+      />
+
+      <button onClick={handleSubmit}>
+        Submit Test
+      </button>
+
+      {score !== null && (
+        <h2>
+          Score: {score} / {questions.length}
+        </h2>
+      )}
+    </div>
+  );
 }
 
 export default QuizPage;

@@ -115,7 +115,7 @@ function UploadPDF({ onUploaded }) {
             </div>
           )}
 
-          <div className=" flex gap-3 mb-60 mt-10">
+          <div className=" flex gap-3 mt-10 mb-60">
             <button
             disabled={!file || loading}
             onClick={handleUpload}

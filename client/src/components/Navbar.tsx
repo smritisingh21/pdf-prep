@@ -7,7 +7,7 @@ export default function Navbar() {
   return (
     
       <nav className="h-16 pt-4 border-b border-zinc-200 bg-white flex items-cente justify-between px-10">
-        <h1 className="text-xl font-semibold text-zinc-900 flex gap-2">
+        <h1 className="text-xl font-semibold text-zinc-900 flex gap-2 cursor-pointer" onClick={() => window.location.reload() }>
          <FileBadgeIcon/> PDF Prep 
         </h1>
 

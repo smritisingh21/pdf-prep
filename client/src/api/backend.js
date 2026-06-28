@@ -24,5 +24,6 @@ export default async function uploadPDF(file) {
 //genrate quiz
 export async function getQuiz() {
   const res = await fetch(`${BASE_URL}/quiz`);
+  console.log(res);
   return res.json();
 }

@@ -4,36 +4,50 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 
 const quizPrompt = PromptTemplate.fromTemplate(`
-You are a helpful tutor creating quiz questions from provided content.
-Generate 5 multiple-choice questions with 4 options each and mark the correct answer.
-Return the response as valid JSON only with this structure:
+You are a helpful tutor creating quiz questions from the provided content.
+
+Generate exactly 5 multiple-choice questions.
+
+Rules:
+- Each question must have exactly 4 options.
+- correctAnswer must be the ZERO-BASED index (0,1,2,3).
+- Return ONLY valid JSON.
+- Do not wrap the JSON in markdown.
+
+Return in this format:
+
 {{
   "questions": [
     {{
-      "question": "question text",
-      "options": ["option1", "option2", "option3", "option4"],
-      "correctAnswer": 0
+      "question": "Question text",
+      "options": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "correctAnswer": 2
     }}
   ]
 }}
 
-Content to create questions from:
+Content:
+
 {context}
 `);
 
 export async function createQuiz(query = "important concepts") {
   try {
-    // 1. Retrieve relevant PDF chunks
     const docs = await retrieveRelevantChunks(query, 5);
 
-    // 2. Combine text from retrieved documents
-    const context = docs.map((d) => d.pageContent).join("\n---\n");
+    const context = docs
+      .map((doc) => doc.pageContent)
+      .join("\n\n");
 
     if (!context) {
-      throw new Error("No relevant content found in vector store");
+      throw new Error("No relevant content found.");
     }
 
-    // 3. Create chain and invoke
     const chain = RunnableSequence.from([
       quizPrompt,
       llm,
@@ -41,14 +55,14 @@ export async function createQuiz(query = "important concepts") {
 
     const response = await chain.invoke({ context });
 
-    // Parse the response to ensure valid JSON
-    try {
-      const parsed = JSON.parse(response);
-      return parsed;
-    } catch {
-      // If response isn't JSON, wrap it
-      return { questions: [{ question: response, options: [], correctAnswer: -1 }] };
-    }
+    // AIMessage -> string
+    const text = response.content;
+
+    console.log("LLM Response:");
+    console.log(text);
+
+    return JSON.parse(text);
+
   } catch (error) {
     console.error("Error creating quiz:", error);
     throw error;

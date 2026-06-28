@@ -3,20 +3,37 @@ import { getQuiz } from "../api/backend";
 import Quiz from "../components/Quiz";
 
 function QuizPage() {
-  const [quiz, setQuiz] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadQuiz() {
-      const data = await getQuiz();
-      setQuiz(data);
+      try {
+        const data = await getQuiz();
+
+        console.log("Quiz API Response:", data);
+
+        // Store only the questions array
+        setQuestions(data.questions || []);
+      } catch (error) {
+        console.error("Failed to load quiz:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadQuiz();
   }, []);
 
-  if (!quiz) return <p>Generating quiz...</p>;
+  if (loading) {
+    return <p>Generating quiz...</p>;
+  }
 
-  return <Quiz questions={quiz} />;
+  if (questions.length === 0) {
+    return <p>No questions found.</p>;
+  }
+
+  return <Quiz questions={questions} />;
 }
 
 export default QuizPage;

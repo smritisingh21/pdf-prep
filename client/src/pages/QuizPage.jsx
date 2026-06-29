@@ -33,18 +33,20 @@ function QuizPage() {
     }));
   }
 
-  function handleSubmit() {
-    let correct = 0;
+ function handleSubmit() {
+  let correct = 0;
 
-    questions.forEach((q, index) => {
-      if (answers[index] === q.correctAnswer) {
-        correct++;
-      }
-    });
+  questions.forEach((q, index) => {
+    const correctOption = q.options[q.correctAnswer];
 
-    setScore(correct);
-    setShowResult(true);
-  }
+    if (answers[index] === correctOption) {
+      correct++;
+    }
+  });
+
+  setScore(correct);
+  setShowResult(true);
+}
 
   function handleRetry() {
     setAnswers({});

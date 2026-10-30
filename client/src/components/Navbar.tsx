@@ -11,9 +11,9 @@ export default function Navbar() {
          <FileBadgeIcon/> PDF Prep 
         </h1>
 
-        <div className=' rounded-full flex justify-center p-2 gap-2 items-center hover:text-gray-500 cursor-pointer'>
+        <div className='   hover:text-gray-500 cursor-pointer'>
            <a href="https://github.com/smritisingh21/pdf-prep">
-            <FaGithub size={20}/> 
+            <FaGithub size={28}/> 
            </a>
         </div>
 

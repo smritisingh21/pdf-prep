@@ -56,12 +56,25 @@ export async function createQuiz(query = "important concepts") {
     const response = await chain.invoke({ context });
 
     // AIMessage -> string
-    const text = response.content;
+    const text = typeof response?.content === "string" ? response.content : response;
 
     console.log("LLM Response:");
     console.log(text);
 
-    return JSON.parse(text);
+    const cleanedText = text
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+
+    try {
+      return JSON.parse(cleanedText);
+    } catch {
+      const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+      throw new Error("Failed to parse quiz JSON from model output");
+    }
 
   } catch (error) {
     console.error("Error creating quiz:", error);

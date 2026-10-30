@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getQuiz } from "../api/backend";
 import Quiz from "../components/Quiz";
 
-function QuizPage() {
+function QuizPage({ onSwitchToFlashcards, onReset }) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [score, setScore] = useState(null);
@@ -86,18 +86,30 @@ function QuizPage() {
 
           {/* Header */}
 
-          <div className="mb-12">
-            <p className="text-blue-600 font-medium uppercase tracking-wider text-sm">
-              PDF Prep
-            </p>
+          <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <p className="text-blue-600 font-medium uppercase tracking-wider text-sm">
+                PDF Prep
+              </p>
 
-            <h1 className="mt-2 text-5xl font-bold text-zinc-900">
-              Knowledge Quiz
-            </h1>
+              <h1 className="mt-2 text-5xl font-bold text-zinc-900">
+                Knowledge Quiz
+              </h1>
 
-            <p className="mt-3 text-zinc-500 text-lg">
-              Test your understanding of the uploaded PDF.
-            </p>
+              <p className="mt-3 text-zinc-500 text-lg">
+                Test your understanding of the uploaded PDF.
+              </p>
+            </div>
+
+            {onSwitchToFlashcards && (
+              <button
+                type="button"
+                onClick={onSwitchToFlashcards}
+                className="self-start md:self-auto px-4 py-2 rounded-2xl text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition"
+              >
+                Switch to Flashcards →
+              </button>
+            )}
           </div>
 
           {/* Progress */}
@@ -236,9 +248,25 @@ function QuizPage() {
 
               <button
                 onClick={handleNextQuiz}
-                className="w-full bg-zinc-900 hover:bg-black text-white rounded-xl py-3 transition font-medium"
+                className="w-full bg-black hover:bg-zinc-800 text-white rounded-xl py-3 transition font-medium"
               >
                 Generate Next Quiz
+              </button>
+
+              {onSwitchToFlashcards && (
+                <button
+                  onClick={onSwitchToFlashcards}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 transition font-medium"
+                >
+                  Practice with Flashcards
+                </button>
+              )}
+
+              <button
+                onClick={() => (onReset ? onReset() : window.location.reload())}
+                className="w-full border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-xl py-3 transition font-medium"
+              >
+                Upload New Document
               </button>
 
             </div>
